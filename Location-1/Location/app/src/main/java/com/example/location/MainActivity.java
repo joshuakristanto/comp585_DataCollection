@@ -11,16 +11,26 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.icu.text.SimpleDateFormat;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.lang.Math;
@@ -36,10 +46,12 @@ public class MainActivity extends AppCompatActivity {
     TextView text3;
     TextView text4;
     Location last;
+    Button button;
     String one = "Location";
     String two = "Average Accelration";
     String three = "Distance";
     String four = "Location History";
+    String output="";
     double distance = 0;
     double distanceRange = 20;
     double latitude = 0;
@@ -51,9 +63,10 @@ public class MainActivity extends AppCompatActivity {
     float averageY;
     float averageZ;
     String locationList[];
-
+    SimpleDateFormat simpleDateFormat;
     String averageValues = "";
     boolean trigger = false;
+    boolean trigger2 = false;
     boolean firstRun = true;
     boolean reset = true;
     int iteration;
@@ -74,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
         text2 = (TextView) findViewById(R.id.textView3);
         text3 = (TextView) findViewById(R.id.textView2);
         text4 = (TextView) findViewById(R.id.textView4);
+        button = (Button)findViewById(R.id.button);
+
         text.setText(one);
         text2.setText(two);
         text3.setText(three);
@@ -84,7 +99,59 @@ public class MainActivity extends AppCompatActivity {
         locationList[2] = "";
         locationList[3] = "";
         text3.setText("Distance: 0.00 m");
+        simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy-hh-mm-ss");
+        String format = simpleDateFormat.format(new Date());
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+//               writeToFile(output);
+                File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/LocationData", "text");
+                if (!file.exists()) {
+                    Log.i("HELLO WORLD", ""+file);
+                    file.mkdirs();
+                }
+                try {
+                    File gpxfile = new File(file, "sample.csv");
+                    Log.i("HELLO WORLD2 " ,""+gpxfile);
+                    FileWriter writer = new FileWriter(gpxfile);
+                    writer.append(output);
+                    writer.flush();
+                    writer.close();
+                    Toast.makeText(MainActivity.this, "Saved your text", Toast.LENGTH_LONG).show();
+                } catch (Exception e) { }
+            }
+
+        });
+
+
+
         if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed; request the permission
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+
+        } else {
+            // Permission has already been granted
+            trigger2 = true;
+        }
+        ;        if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
@@ -156,12 +223,14 @@ public class MainActivity extends AppCompatActivity {
                             "\n\n Average Max Absolute Acceleration: \n"+String.format( "%.2f m/s^2" ,max())   ;
                     one = first+ "\n\nDistance Range: " + distanceRange + " m" ;
                     text.setText("Current Location\n\n"+first+ "\n\nDistance Range: " + distanceRange + " m");
+                    output = "\n"+simpleDateFormat.format(new Date())+", " +location.getLatitude() +", "+ location.getLongitude() +", " +location.getAltitude() +", "+String.format( "%.2f m/s^2" ,max()) ;
+
                     locationList[0] = first;
                     printIteration++;
                     firstRun = false;
                     reset = true;
                 } else {
-                  //  distance = distanceFormula(latitude, location.getLatitude(), longitude, location.getLatitude());
+                    //  distance = distanceFormula(latitude, location.getLatitude(), longitude, location.getLatitude());
                     distance = location.distanceTo(last);
 
                     reset = false;
@@ -173,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
                         longitude = location.getLongitude();
                         last = location;
                         first = address.get(0).getAddressLine(0) + "\nLongitude: " + location.getLatitude() + "\nLatitude: " + location.getLongitude() + "\n" + "Altitude: " + location.getAltitude() +
-                                "\n\n Average Max Absolute Acceleration: \n"+String.format( "%.2f m/s^2" ,max())  ;
+                                "\n\n Average Max Absolute Acceleration: \n"+String.format( "%.2f" ,max())  ;
                         one = first+ "\n\nDistance Range: " + distanceRange + " m";
                         text.setText("Current Location\n\n"+first+ "\n\nDistance Range: " + distanceRange + " m");
                         reset = true;
@@ -181,6 +250,8 @@ public class MainActivity extends AppCompatActivity {
                         distance = 0;
                         three = "Distance: " + distance +" m" ;
                         text3.setText("Distance: " + String.format("%.2f m/s^2",distance) +" m");
+                        output = output +"\n"+simpleDateFormat.format(new Date())+", " +location.getLatitude() +", "+ location.getLongitude() +", " +location.getAltitude()+ ", " + String.format( "%.2f" ,max());
+
                         if(printIteration>3)
                         {
                             String a = locationList[1];
@@ -214,7 +285,7 @@ public class MainActivity extends AppCompatActivity {
                     text4.setText("Location History");
                 }
 
-               else if(locationList[1].equals(""))
+                else if(locationList[1].equals(""))
                 {
                     four = "Location History\n\n#1\n" +locationList[0]+"\n";
                     text4.setText("Location History\n\n#1\n" +locationList[0]+"\n");
@@ -259,7 +330,7 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("GPS PROVIDER TRIGGER");
             mSensorManager.registerListener(listener2, mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION), SensorManager.SENSOR_DELAY_UI);
             manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, listener);
-           // manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
+            // manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
         }
     }
 
@@ -293,9 +364,38 @@ public class MainActivity extends AppCompatActivity {
             trigger = true;
         }
         ;
+
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed; request the permission
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+
+        } else {
+            // Permission has already been granted
+            trigger2 = true;
+        }
+        ;
         if (trigger) {
             manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, listener);
-           // manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
+            // manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
             mSensorManager.registerListener(listener2, mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION), SensorManager.SENSOR_DELAY_UI);
         }
     }
@@ -324,7 +424,7 @@ public class MainActivity extends AppCompatActivity {
         outState.putFloat("averageX",averageX);
         outState.putFloat("averageY",averageY);
         outState.putFloat("averageZ", averageZ);
-       // outState.putString(locationList,"LocationList");
+        // outState.putString(locationList,"LocationList");
 
     }
     @Override
@@ -332,16 +432,16 @@ public class MainActivity extends AppCompatActivity {
     {
 
         super.onRestoreInstanceState(savedInstanceState);
-       one = savedInstanceState.getString("one");
-       two = savedInstanceState.getString("two");
-       three = savedInstanceState.getString("three");
-       four = savedInstanceState.getString("four");
-       sumX = savedInstanceState.getFloat("sumX");
-       sumY= savedInstanceState.getFloat("sumY");
-       sumZ = savedInstanceState.getFloat("sumZ");
-       averageX = savedInstanceState.getFloat("averageX");
-       averageY = savedInstanceState.getFloat("averageY");
-       averageZ = savedInstanceState.getFloat("averageZ");
+        one = savedInstanceState.getString("one");
+        two = savedInstanceState.getString("two");
+        three = savedInstanceState.getString("three");
+        four = savedInstanceState.getString("four");
+        sumX = savedInstanceState.getFloat("sumX");
+        sumY= savedInstanceState.getFloat("sumY");
+        sumZ = savedInstanceState.getFloat("sumZ");
+        averageX = savedInstanceState.getFloat("averageX");
+        averageY = savedInstanceState.getFloat("averageY");
+        averageZ = savedInstanceState.getFloat("averageZ");
 
 
 
@@ -366,5 +466,22 @@ public class MainActivity extends AppCompatActivity {
         float a = Math.max(Math.abs(averageX),Math.abs(averageY));
         float b = Math.max(Math.abs(averageZ),a);
         return b;
+    }
+    private void writeToFile(String data) {
+
+            File file = new File("/LocationData", "text");
+            if (!file.exists()) {
+                Log.i("HELLO WORLD", ""+file);
+                file.mkdir();
+            }
+            try {
+                File gpxfile = new File(file, "sample");
+                Log.i("HELLO WORLD2 " ,""+gpxfile);
+                FileWriter writer = new FileWriter(gpxfile);
+                writer.append(data);
+                writer.flush();
+                writer.close();
+                Toast.makeText(MainActivity.this, "Saved your text", Toast.LENGTH_LONG).show();
+            } catch (Exception e) { }
     }
 }
