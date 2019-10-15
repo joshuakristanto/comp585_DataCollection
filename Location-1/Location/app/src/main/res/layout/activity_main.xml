@@ -19,6 +19,13 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
+            <Button
+                android:id="@+id/button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Write/Save" />
+
             <TextView
                 android:id="@+id/textView"
                 android:layout_width="match_parent"
@@ -94,13 +101,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 android:background="@drawable/back"
                 android:freezesText="true"/>
-
-            <Button
-                android:id="@+id/button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Button" />
 
 
         </LinearLayout>

@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     String four = "Location History";
     String output="";
     double distance = 0;
-    double distanceRange = 20;
+    double distanceRange = 10;
     double latitude = 0;
     double longitude = 0;
     float sumX;
@@ -99,10 +99,11 @@ public class MainActivity extends AppCompatActivity {
         locationList[2] = "";
         locationList[3] = "";
         text3.setText("Distance: 0.00 m");
-        simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy-hh-mm-ss");
+        simpleDateFormat = new SimpleDateFormat("hh:mm:ss");
         String format = simpleDateFormat.format(new Date());
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+               SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("hh_mm_ss");
                 // Perform action on click
 //               writeToFile(output);
                 File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/LocationData", "text");
@@ -111,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
                     file.mkdirs();
                 }
                 try {
-                    File gpxfile = new File(file, "sample.csv");
+                    File gpxfile = new File(file, simpleDateFormat2.format(new Date())+"sample.csv");
                     Log.i("HELLO WORLD2 " ,""+gpxfile);
                     FileWriter writer = new FileWriter(gpxfile);
                     writer.append(output);
@@ -223,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
                             "\n\n Average Max Absolute Acceleration: \n"+String.format( "%.2f m/s^2" ,max())   ;
                     one = first+ "\n\nDistance Range: " + distanceRange + " m" ;
                     text.setText("Current Location\n\n"+first+ "\n\nDistance Range: " + distanceRange + " m");
-                    output = "\n"+simpleDateFormat.format(new Date())+", " +location.getLatitude() +", "+ location.getLongitude() +", " +location.getAltitude() +", "+String.format( "%.2f m/s^2" ,max()) ;
+                    output = simpleDateFormat.format(new Date())+", " +location.getLatitude() +", "+ location.getLongitude() +", " +location.getAltitude() +", "+String.format( "%.2f" ,max()) +", "+address.get(0).getAddressLine(0)  ;
 
                     locationList[0] = first;
                     printIteration++;
@@ -250,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
                         distance = 0;
                         three = "Distance: " + distance +" m" ;
                         text3.setText("Distance: " + String.format("%.2f m/s^2",distance) +" m");
-                        output = output +"\n"+simpleDateFormat.format(new Date())+", " +location.getLatitude() +", "+ location.getLongitude() +", " +location.getAltitude()+ ", " + String.format( "%.2f" ,max());
+                        output = output +"\n"+simpleDateFormat.format(new Date())+", " +location.getLatitude() +", "+ location.getLongitude() +", " +location.getAltitude()+ ", " + String.format( "%.2f" ,max()) +", "+address.get(0).getAddressLine(0) ;
 
                         if(printIteration>3)
                         {
@@ -467,21 +468,21 @@ public class MainActivity extends AppCompatActivity {
         float b = Math.max(Math.abs(averageZ),a);
         return b;
     }
-    private void writeToFile(String data) {
-
-            File file = new File("/LocationData", "text");
-            if (!file.exists()) {
-                Log.i("HELLO WORLD", ""+file);
-                file.mkdir();
-            }
-            try {
-                File gpxfile = new File(file, "sample");
-                Log.i("HELLO WORLD2 " ,""+gpxfile);
-                FileWriter writer = new FileWriter(gpxfile);
-                writer.append(data);
-                writer.flush();
-                writer.close();
-                Toast.makeText(MainActivity.this, "Saved your text", Toast.LENGTH_LONG).show();
-            } catch (Exception e) { }
-    }
+//    private void writeToFile(String data) {
+//
+//            File file = new File("/LocationData", "text");
+//            if (!file.exists()) {
+//                Log.i("HELLO WORLD", ""+file);
+//                file.mkdir();
+//            }
+//            try {
+//                File gpxfile = new File(file, "sample.csv");
+//                Log.i("HELLO WORLD2 " ,""+gpxfile);
+//                FileWriter writer = new FileWriter(gpxfile);
+//                writer.append(data);
+//                writer.flush();
+//                writer.close();
+//                Toast.makeText(MainActivity.this, "Saved your text", Toast.LENGTH_LONG).show();
+//            } catch (Exception e) { }
+//    }
 }
