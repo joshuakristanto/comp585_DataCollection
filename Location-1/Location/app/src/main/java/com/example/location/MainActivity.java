@@ -189,6 +189,9 @@ public class MainActivity extends AppCompatActivity {
                     sumX = 0;
                     sumX = 0;
                     sumZ = 0;
+                    averageX = 0;
+                    averageY = 0;
+                    averageZ = 0;
                     averageValues = average(var1.values[0], var1.values[1], var1.values[2], iteration);
                     reset = false;
                     two = averageValues;
@@ -224,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
                             "\n\n Average Max Absolute Acceleration: \n"+String.format( "%.2f m/s^2" ,max())   ;
                     one = first+ "\n\nDistance Range: " + distanceRange + " m" ;
                     text.setText("Current Location\n\n"+first+ "\n\nDistance Range: " + distanceRange + " m");
-                    output = simpleDateFormat.format(new Date())+", " +location.getLatitude() +", "+ location.getLongitude() +", " +location.getAltitude() +", "+String.format( "%.2f" ,max()) +", "+address.get(0).getAddressLine(0)  ;
+                    output = ""+simpleDateFormat.format(new Date())+", " +location.getLatitude() +", "+ location.getLongitude() +", " +location.getAltitude() +", "+String.format( "%.2f" ,max()) +", "+address.get(0).getAddressLine(0)  ;
 
                     locationList[0] = first;
                     printIteration++;
