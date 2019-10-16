@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     String four = "Location History";
     String output="";
     double distance = 0;
-    double distanceRange = 3;
+    double distanceRange = 1;
     double latitude = 0;
     double longitude = 0;
     float sumX = 0;
@@ -187,13 +187,8 @@ public class MainActivity extends AppCompatActivity {
 //                Toast.makeText(MainActivity.this, var1.values[0] +" "+var1.values[1]+" " +var1.values[2], Toast.LENGTH_LONG).show();
                 if (reset) {
                     iteration = 0;
-                    sumX = 0;
-                    sumX = 0;
-                    sumZ = 0;
-                    averageX = 0;
-                    averageY = 0;
-                    averageZ = 0;
-                    Log.i("False Before Reached",averageX+" " +averageY + " "+ averageZ);
+                    resets();
+                   // averageValues = average(var1.values[0], var1.values[1], var1.values[2], iteration);
                     averageValues = average(0, 0, 0, 1);
                     reset = false;
                     Log.i("False Reached3",sumX+" " +sumY + " "+ sumZ);
@@ -201,6 +196,7 @@ public class MainActivity extends AppCompatActivity {
                     two = averageValues;
                     Log.i("False Reached2",averageValues);
                     text2.setText(averageValues);
+                   // Toast.makeText(MainActivity.this, "Reset"+ averageValues, Toast.LENGTH_LONG).show();
                 } else {
                     iteration++;
                     averageValues = average(var1.values[0], var1.values[1], var1.values[2], iteration);
@@ -264,6 +260,7 @@ public class MainActivity extends AppCompatActivity {
                                 "\n\n Average Max Absolute Acceleration: \n"+String.format( "%.2f" ,max())  ;
                         one = first+ "\n\nDistance Range: " + distanceRange + " m";
                         text.setText("Current Location\n\n"+first+ "\n\nDistance Range: " + distanceRange + " m");
+                        float empty = max();
                         reset = true;
                         firstRun = false;
                         distance = 0;
@@ -271,12 +268,7 @@ public class MainActivity extends AppCompatActivity {
                         text3.setText("Distance: " + String.format("%.2f ",distance) +" m");
                         output = output +"\n"+simpleDateFormat.format(new Date())+", " +location.getLatitude() +", "+ location.getLongitude() +", " +location.getAltitude()+ ", " + String.format( "%.2f" ,max()) +", "+address.get(0).getAddressLine(0) ;
                         iteration = 1;
-                        sumX = 0;
-                        sumX = 0;
-                        sumZ = 0;
-                        averageX = 0;
-                        averageY = 0;
-                        averageZ = 0;
+                        resets();
                         mSensorManager.unregisterListener(listener2);
                         mSensorManager.registerListener(listener2, mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION), SensorManager.SENSOR_DELAY_UI);
 
@@ -362,6 +354,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void resets()
+    {
+        this.averageX = 0;
+        this.averageY = 0;
+        this.averageZ =0;
+        this.sumX = 0;
+        this.sumY = 0;
+        this.sumZ = 0;
+    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -426,6 +427,13 @@ public class MainActivity extends AppCompatActivity {
             // manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
             mSensorManager.registerListener(listener2, mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION), SensorManager.SENSOR_DELAY_UI);
         }
+        iteration = 1;
+        sumX = 0;
+        sumX = 0;
+        sumZ = 0;
+        averageX = 0;
+        averageY = 0;
+        averageZ = 0;
     }
     @Override
     protected void onPause()
@@ -496,10 +504,19 @@ public class MainActivity extends AppCompatActivity {
         averageX = sumX / iteration;
         averageY = sumY / iteration;
         averageZ = sumZ / iteration;
+//        if(reset)
+//        Toast.makeText(MainActivity.this, "Sum of Acelerometer\n\n"+String.format("X: %.2f m/s^2" , sumX )+ String.format("\nY: %.2f m/s^2" , sumY )+ String.format("\nZ: %.2f m/s^2" , sumZ), Toast.LENGTH_LONG).show();
         return "Averages of Acelerometer\n\n"+String.format("X: %.2f m/s^2" , averageX )+ String.format("\nY: %.2f m/s^2" , averageY )+ String.format("\nZ: %.2f m/s^2" , averageZ );
     }
     public float max()
     {
+        if(reset)
+        {
+            averageX = 0;
+            averageY = 0;
+            averageY = 0;
+            averageZ =0;
+        }
         float a = Math.max(Math.abs(averageX),Math.abs(averageY));
         float b = Math.max(Math.abs(averageZ),a);
         return b;
