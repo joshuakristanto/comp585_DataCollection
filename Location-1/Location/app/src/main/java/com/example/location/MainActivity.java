@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     String four = "Location History";
     String output="";
     double distance = 0;
-    double distanceRange = 1;
+    double distanceRange = 3;
     double latitude = 0;
     double longitude = 0;
     float sumX = 0;
