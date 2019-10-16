@@ -53,15 +53,15 @@ public class MainActivity extends AppCompatActivity {
     String four = "Location History";
     String output="";
     double distance = 0;
-    double distanceRange = 10;
+    double distanceRange = 3;
     double latitude = 0;
     double longitude = 0;
-    float sumX;
-    float sumY;
-    float sumZ;
-    float averageX;
-    float averageY;
-    float averageZ;
+    float sumX = 0;
+    float sumY = 0;
+    float sumZ = 0;
+    float averageX = 0;
+    float averageY = 0;
+    float averageZ = 0;
     String locationList[];
     SimpleDateFormat simpleDateFormat;
     String averageValues = "";
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     boolean trigger2 = false;
     boolean firstRun = true;
     boolean reset = true;
-    int iteration;
+    int iteration = 0;
     int printIteration;
     SensorManager mSensorManager;
     SensorEventListener listener2;
@@ -183,23 +183,31 @@ public class MainActivity extends AppCompatActivity {
 
         listener2 = new SensorEventListener() {
             public void onSensorChanged(SensorEvent var1) {
-                Log.i("sensor",var1.values[0] +" "+var1.values[1]+" " +var1.values[2]);
+                Log.i("sensor",reset+" "+var1.values[0] +" "+var1.values[1]+" " +var1.values[2]);
+//                Toast.makeText(MainActivity.this, var1.values[0] +" "+var1.values[1]+" " +var1.values[2], Toast.LENGTH_LONG).show();
                 if (reset) {
-                    iteration = 1;
+                    iteration = 0;
                     sumX = 0;
                     sumX = 0;
                     sumZ = 0;
                     averageX = 0;
                     averageY = 0;
                     averageZ = 0;
-                    averageValues = average(var1.values[0], var1.values[1], var1.values[2], iteration);
+                    Log.i("False Before Reached",averageX+" " +averageY + " "+ averageZ);
+                    averageValues = average(0, 0, 0, 1);
                     reset = false;
+                    Log.i("False Reached3",sumX+" " +sumY + " "+ sumZ);
+                    Log.i("False Reached",averageX+" " +averageY + " "+ averageZ);
                     two = averageValues;
+                    Log.i("False Reached2",averageValues);
                     text2.setText(averageValues);
                 } else {
                     iteration++;
                     averageValues = average(var1.values[0], var1.values[1], var1.values[2], iteration);
+                    Log.i("False Reached5",sumX+" " +sumY + " "+ sumZ);
+                    Log.i("False Reached6",averageX+" " +averageY + " "+ averageZ);
                     two = averageValues;
+                    Log.i("False Reached7",averageValues);
                     text2.setText(averageValues);
                 }
             }
@@ -233,6 +241,13 @@ public class MainActivity extends AppCompatActivity {
                     printIteration++;
                     firstRun = false;
                     reset = true;
+                    iteration = 1;
+                    sumX = 0;
+                    sumX = 0;
+                    sumZ = 0;
+                    averageX = 0;
+                    averageY = 0;
+                    averageZ = 0;
                 } else {
                     //  distance = distanceFormula(latitude, location.getLatitude(), longitude, location.getLatitude());
                     distance = location.distanceTo(last);
@@ -253,8 +268,17 @@ public class MainActivity extends AppCompatActivity {
                         firstRun = false;
                         distance = 0;
                         three = "Distance: " + distance +" m" ;
-                        text3.setText("Distance: " + String.format("%.2f m/s^2",distance) +" m");
+                        text3.setText("Distance: " + String.format("%.2f ",distance) +" m");
                         output = output +"\n"+simpleDateFormat.format(new Date())+", " +location.getLatitude() +", "+ location.getLongitude() +", " +location.getAltitude()+ ", " + String.format( "%.2f" ,max()) +", "+address.get(0).getAddressLine(0) ;
+                        iteration = 1;
+                        sumX = 0;
+                        sumX = 0;
+                        sumZ = 0;
+                        averageX = 0;
+                        averageY = 0;
+                        averageZ = 0;
+                        mSensorManager.unregisterListener(listener2);
+                        mSensorManager.registerListener(listener2, mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION), SensorManager.SENSOR_DELAY_UI);
 
                         if(printIteration>3)
                         {
@@ -280,7 +304,7 @@ public class MainActivity extends AppCompatActivity {
                     else
                     {
                         three =  "Distance: " + distance +" m";
-                        text3.setText("Distance: " + String.format("%.2f m/s^2",distance) +" m");
+                        text3.setText("Distance: " + String.format("%.2f ",distance) +" m");
                     }
                 }
                 if(locationList[0].equals(""))
@@ -412,44 +436,44 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState)
-    {
-
-
-        super.onSaveInstanceState(outState);
-        outState.putString("one",one);
-        outState.putString("two", two);
-        outState.putString("three", three);
-        outState.putString("four", four);
-        outState.putFloat("sumX",sumX);
-        outState.putFloat("sumY",sumY);
-        outState.putFloat("sumZ",sumZ);
-        outState.putFloat("averageX",averageX);
-        outState.putFloat("averageY",averageY);
-        outState.putFloat("averageZ", averageZ);
-        // outState.putString(locationList,"LocationList");
-
-    }
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState)
-    {
-
-        super.onRestoreInstanceState(savedInstanceState);
-        one = savedInstanceState.getString("one");
-        two = savedInstanceState.getString("two");
-        three = savedInstanceState.getString("three");
-        four = savedInstanceState.getString("four");
-        sumX = savedInstanceState.getFloat("sumX");
-        sumY= savedInstanceState.getFloat("sumY");
-        sumZ = savedInstanceState.getFloat("sumZ");
-        averageX = savedInstanceState.getFloat("averageX");
-        averageY = savedInstanceState.getFloat("averageY");
-        averageZ = savedInstanceState.getFloat("averageZ");
-
-
-
-    }
+//    @Override
+//    protected void onSaveInstanceState(Bundle outState)
+//    {
+//
+//
+//        super.onSaveInstanceState(outState);
+//        outState.putString("one",one);
+//        outState.putString("two", two);
+//        outState.putString("three", three);
+//        outState.putString("four", four);
+//        outState.putFloat("sumX",sumX);
+//        outState.putFloat("sumY",sumY);
+//        outState.putFloat("sumZ",sumZ);
+//        outState.putFloat("averageX",averageX);
+//        outState.putFloat("averageY",averageY);
+//        outState.putFloat("averageZ", averageZ);
+//        // outState.putString(locationList,"LocationList");
+//
+//    }
+//    @Override
+//    protected void onRestoreInstanceState(Bundle savedInstanceState)
+//    {
+//
+//        super.onRestoreInstanceState(savedInstanceState);
+//        one = savedInstanceState.getString("one");
+//        two = savedInstanceState.getString("two");
+//        three = savedInstanceState.getString("three");
+//        four = savedInstanceState.getString("four");
+//        sumX = savedInstanceState.getFloat("sumX");
+//        sumY= savedInstanceState.getFloat("sumY");
+//        sumZ = savedInstanceState.getFloat("sumZ");
+//        averageX = savedInstanceState.getFloat("averageX");
+//        averageY = savedInstanceState.getFloat("averageY");
+//        averageZ = savedInstanceState.getFloat("averageZ");
+//
+//
+//
+//    }
     public double distanceFormula(double x1, double x2, double y1, double y2) {
         double distance = 0;
         distance = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
@@ -457,6 +481,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public String average(float numberX, float numberY, float numberZ, int iteration) {
+        if(reset)
+        {
+            sumX = 0;
+            sumY = 0;
+            sumZ = 0;
+            averageX = 0;
+            averageY = 0;
+            averageZ =0;
+        }
         sumX = sumX + numberX;
         sumY = sumY + numberY;
         sumZ = sumZ + numberZ;
