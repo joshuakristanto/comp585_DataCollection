@@ -232,7 +232,6 @@ public class MainActivity extends AppCompatActivity {
                     one = first+ "\n\nDistance Range: " + distanceRange + " m" ;
                     text.setText("Current Location\n\n"+first+ "\n\nDistance Range: " + distanceRange + " m");
                     output = ""+simpleDateFormat.format(new Date())+", " +location.getLatitude() +", "+ location.getLongitude() +", " +location.getAltitude() +", "+String.format( "%.2f" ,max()) +", "+address.get(0).getAddressLine(0)  ;
-
                     locationList[0] = first;
                     printIteration++;
                     firstRun = false;
@@ -260,13 +259,13 @@ public class MainActivity extends AppCompatActivity {
                                 "\n\n Average Max Absolute Acceleration: \n"+String.format( "%.2f" ,max())  ;
                         one = first+ "\n\nDistance Range: " + distanceRange + " m";
                         text.setText("Current Location\n\n"+first+ "\n\nDistance Range: " + distanceRange + " m");
-                        float empty = max();
+                        text3.setText("Distance: " + String.format("%.2f ",distance) +" m");
+                        output = output +"\n"+simpleDateFormat.format(new Date())+", " +location.getLatitude() +", "+ location.getLongitude() +", " +location.getAltitude()+ ", " + String.format( "%.2f" ,max()) +", "+address.get(0).getAddressLine(0) ;
                         reset = true;
+                        float empty = max();
                         firstRun = false;
                         distance = 0;
                         three = "Distance: " + distance +" m" ;
-                        text3.setText("Distance: " + String.format("%.2f ",distance) +" m");
-                        output = output +"\n"+simpleDateFormat.format(new Date())+", " +location.getLatitude() +", "+ location.getLongitude() +", " +location.getAltitude()+ ", " + String.format( "%.2f" ,max()) +", "+address.get(0).getAddressLine(0) ;
                         iteration = 1;
                         resets();
                         mSensorManager.unregisterListener(listener2);
